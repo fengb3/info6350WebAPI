@@ -9,18 +9,26 @@ namespace info6350WebAPI;
 [Route("[controller]")]
 public class ProductController : ControllerBase
 {
+    
+    private readonly IDB<Product> _db;
+    
+    public ProductController(IDB<Product> db)
+    {
+        _db = db;
+    }
+    
     [HttpPost("add")]
     public IActionResult Add([FromBody, Required] Product product)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         // Check if the company exists
-        if (DB<Company>.TryGet(product.CompanyId, out _))
+        if (_db.TryGet(product.CompanyId, out _))
         {
             return BadRequest("Invalid CompanyId");
         }
 
-        DB<Product>.Insert(product);
+        _db.Insert(product);
 
         return Created($"/Product/{product.Id}", product);
     }
@@ -30,7 +38,7 @@ public class ProductController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        if (!DB<Product>.TryGet(id, out var product)) return NotFound();
+        if (!_db.TryGet(id, out var product)) return NotFound();
 
         return Ok(product);
     }
@@ -41,9 +49,9 @@ public class ProductController : ControllerBase
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         // Check if the company exists
-        if (DB<Company>.TryGet(product.CompanyId, out _)) return BadRequest("Invalid CompanyId");
+        if (_db.TryGet(product.CompanyId, out _)) return BadRequest("Invalid CompanyId");
 
-        DB<Product>.Update(product);
+        _db.Update(product);
 
         return Ok(product);
     }
@@ -53,16 +61,17 @@ public class ProductController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        if (!DB<Product>.TryGet(id, out _)) return NotFound();
+        if (!_db.TryGet(id, out _)) return NotFound();
 
-        DB<Product>.Delete(id);
+        _db.Delete(id);
+        
         return Ok();
     }
 
     [HttpGet("getAll")]
     public IActionResult GetAll()
     {
-        var products = DB<Product>.GetAll();
+        var products = _db.GetAll();
 
         if (!products.Any()) return NoContent();
 

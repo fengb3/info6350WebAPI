@@ -50,7 +50,7 @@ public class CompanyController : ControllerBase
     [HttpDelete("delete/{id:long}")]
     public IActionResult Delete(long id)
     {
-        var company = DB<Company>.Get(id);
+        var company = _db.Get(id);
 
         if (company == null) return NotFound();
 

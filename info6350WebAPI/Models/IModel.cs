@@ -22,7 +22,7 @@ public partial class Product : IModel
     [Range(0, 5)]
     public double ProductRating      { get; set; } = 0; // should between 0 and 5
     
-    [Required]
+    [Required,Indexed]
     public long   CompanyId          { get; set; } = 0; // should be a valid company id in Company table
     
     [Range(1, int.MaxValue)]
@@ -61,11 +61,20 @@ public partial class ProductPost : IModel
     [PrimaryKey, AutoIncrement]
     public long Id { get; set; } = 0;
 
-    public long   ProductId     { get; set; } = 0; // should be a valid product id in Product table
-    public long   CompanyId     { get; set; } = 0; // should be a valid company id in Company table
-    public long   ProductTypeId { get; set; } = 0; // should be a valid product type id in ProductType table
-    public string PostedDate    { get; set; } = ""; // can not be empty, should be a valid date formatted in "yyyy-MM-dd"
-    public double Price         { get; set; } = 0; // should be a positive number
+    [Indexed, Required]
+    public long ProductId { get; set; } = 0; // should be a valid product id in Product table
+
+    [Indexed, Required]
+    public long CompanyId { get; set; } = 0; // should be a valid company id in Company table
+
+    [Indexed, Required]
+    public long ProductTypeId { get; set; } = 0; // should be a valid product type id in ProductType table
+
+    [NotNull, Required, MinLength(10)]
+    public string PostedDate { get; set; } = ""; // can not be empty, should be a valid date formatted in "yyyy-MM-dd"
+
+    [NotNull, Required]
+    public double Price { get; set; } = 0; // should be a positive number
 }
 
 [Table("ProductType")]
@@ -74,6 +83,7 @@ public partial class ProductType : IModel
     [PrimaryKey, AutoIncrement]
     public long Id { get; set; } = 0;
 
+    [Required, MinLength(1)]
     public string Name { get; set; } = ""; // can not be empty, can not be duplicated
 }
 
@@ -83,8 +93,15 @@ public partial class Order : IModel
     [PrimaryKey, AutoIncrement]
     public long Id { get; set; } = 0;
 
-    public long   PostId        { get; set; } = 0; // should be a valid product post id in ProductPost table
-    public string Date          { get; set; } = ""; // can not be empty, should be a valid date formatted in "yyyy-MM-dd"
-    public long   ProductId     { get; set; } = 0; // should be a valid product id in Product table
-    public long   ProductTypeId { get; set; } = 0; // should be a valid product type id in ProductType table
+    [Required]
+    public long PostId { get; set; } = 0; // should be a valid product post id in ProductPost table
+
+    [Required, MinLength(10)]
+    public string Date { get; set; } = ""; // can not be empty, should be a valid date formatted in "yyyy-MM-dd"
+
+    [Required]
+    public long ProductId { get; set; } = 0; // should be a valid product id in Product table
+
+    [Required]
+    public long ProductTypeId { get; set; } = 0; // should be a valid product type id in ProductType table
 }

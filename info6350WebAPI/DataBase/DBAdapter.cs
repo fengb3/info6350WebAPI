@@ -1,29 +1,37 @@
 namespace info6350WebAPI;
 
+// ReSharper disable once InconsistentNaming
 public class DBAdapter<T> : IDB<T> where T : IModel, new()
 {
     public T? Get(long id)
     {
-        return DB<T>.Get(id);
+        return DataBaseHandler.Conn.Find<T>(id);
     }
 
     public IEnumerable<T> GetAll()
     {
-        return DB<T>.GetAll();
+        return DataBaseHandler.Conn.Table<T>();
     }
 
     public void Insert(T model)
     {
-        DB<T>.Insert(model);
+        DataBaseHandler.Conn.Insert(model);
     }
 
     public void Update(T model)
     {
-        DB<T>.Update(model);
+        DataBaseHandler.Conn.Update(model);
     }
 
     public void Delete(long id)
     {
-        DB<T>.Delete(id);
+        DataBaseHandler.Conn.Delete<T>(id);
+    }
+    
+    public bool TryGet(long id, out T? model)
+    {
+        model = DataBaseHandler.Conn.Find<T>(id);
+        
+        return model != null;
     }
 }

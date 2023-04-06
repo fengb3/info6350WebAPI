@@ -11,6 +11,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped(typeof(IDB<>), typeof(DBAdapter<>));
 
+// Configure the application to listen on any IP address
+builder.WebHost.ConfigureKestrel(options => { options.ListenAnyIP(5000); });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
